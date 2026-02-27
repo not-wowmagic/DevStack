@@ -6,7 +6,7 @@ import CodeSandbox from './components/CodeSandbox.jsx';
 import { languages, curriculum } from './data/curriculum.js';
 
 function App() {
-    const [selectedLanguage, setSelectedLanguage] = useState('javascript');
+    const [selectedLanguage, setSelectedLanguage] = useState('python');
     const [activeLessonId, setActiveLessonId] = useState('intro');
     const [completedLessons, setCompletedLessons] = useState(new Set());
     const [searchQuery, setSearchQuery] = useState('');
