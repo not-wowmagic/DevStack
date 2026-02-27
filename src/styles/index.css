@@ -613,12 +613,38 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    transition: background 0.2s ease;
+}
+
+.console-header:hover {
+    background: #2d3748;
 }
 
 .console-header-left {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+}
+
+.console-header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.console-toggle-icon {
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+    color: #64748b;
+}
+
+.console-toggle-icon.open {
+    transform: rotate(180deg);
+}
+
+.console-panel.collapsed {
+    height: 48px;
 }
 
 .console-dot {
@@ -806,11 +832,19 @@ body {
     }
 
     .sandbox-pane {
-        height: 450px;
+        height: auto;
+        flex: 1;
     }
 
     .console-panel {
-        height: 160px;
+        height: 200px;
+        position: sticky;
+        bottom: 0;
+        z-index: 50;
+    }
+
+    .console-panel.collapsed {
+        height: 48px;
     }
 
     .btn {

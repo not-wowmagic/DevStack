@@ -27,6 +27,7 @@ function CodeSandbox({ starterCode, language, lessonId }) {
     const [output, setOutput] = useState([]);
     const [isRunning, setIsRunning] = useState(false);
     const [hasError, setHasError] = useState(false);
+    const [isConsoleOpen, setIsConsoleOpen] = useState(true);
     const outputRef = useRef(null);
 
     // Reset code when lesson changes
@@ -45,6 +46,7 @@ function CodeSandbox({ starterCode, language, lessonId }) {
     const runCode = useCallback(() => {
         setIsRunning(true);
         setHasError(false);
+        setIsConsoleOpen(true); // Open console when running code
 
         const logs = [];
         const timestamp = new Date().toLocaleTimeString();
@@ -93,7 +95,7 @@ function CodeSandbox({ starterCode, language, lessonId }) {
 
         setIsRunning(false);
         setTimeout(scrollOutputToBottom, 50);
-    }, [code]);
+    }, [code, language]);
 
     const clearOutput = () => {
         setOutput([]);
@@ -165,35 +167,49 @@ function CodeSandbox({ starterCode, language, lessonId }) {
             </div>
 
             {/* Console Output */}
-            <div className={`console-panel ${hasError ? 'has-error' : ''}`}>
-                <div className="console-header">
+            <div className={`console-panel ${hasError ? 'has-error' : ''} ${!isConsoleOpen ? 'collapsed' : ''}`}>
+                <div className="console-header" onClick={() => setIsConsoleOpen(!isConsoleOpen)} style={{ cursor: 'pointer' }}>
                     <div className="console-header-left">
                         <span className={`console-dot ${hasError ? 'error' : output.length ? 'active' : ''}`} />
                         <span className="console-title">Console Output</span>
                     </div>
-                    <button
-                        className="console-clear-btn"
-                        onClick={clearOutput}
-                        id="clear-console-btn"
-                        aria-label="Clear console"
-                    >
-                        Clear
-                    </button>
+                    <div className="console-header-right">
+                        {isConsoleOpen && (
+                            <button
+                                className="console-clear-btn"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    clearOutput();
+                                }}
+                                id="clear-console-btn"
+                                aria-label="Clear console"
+                            >
+                                Clear
+                            </button>
+                        )}
+                        <span className={`console-toggle-icon ${isConsoleOpen ? 'open' : ''}`}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+                                <polyline points="18 15 12 9 6 15" />
+                            </svg>
+                        </span>
+                    </div>
                 </div>
-                <div className="console-output" ref={outputRef} aria-live="polite" aria-label="Console output">
-                    {output.length === 0 ? (
-                        <span className="console-placeholder">▶ Press "Run Code" to execute…</span>
-                    ) : (
-                        output.map((line, i) => (
-                            <div key={i} className={`console-line console-${line.type}`}>
-                                {line.type === 'error' && <span className="console-line-icon">✕</span>}
-                                {line.type === 'warn' && <span className="console-line-icon">⚠</span>}
-                                {line.type === 'log' && <span className="console-line-icon">›</span>}
-                                <span className="console-line-text">{line.text}</span>
-                            </div>
-                        ))
-                    )}
-                </div>
+                {isConsoleOpen && (
+                    <div className="console-output" ref={outputRef} aria-live="polite" aria-label="Console output">
+                        {output.length === 0 ? (
+                            <span className="console-placeholder">▶ Press "Run Code" to execute…</span>
+                        ) : (
+                            output.map((line, i) => (
+                                <div key={i} className={`console-line console-${line.type}`}>
+                                    {line.type === 'error' && <span className="console-line-icon">✕</span>}
+                                    {line.type === 'warn' && <span className="console-line-icon">⚠</span>}
+                                    {line.type === 'log' && <span className="console-line-icon">›</span>}
+                                    <span className="console-line-text">{line.text}</span>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );
